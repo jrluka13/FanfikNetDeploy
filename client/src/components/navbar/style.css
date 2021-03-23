@@ -1,0 +1,5 @@
+.disablednav {
+  pointer-events: none; /* делаем элемент неактивным для взаимодействия */
+  cursor: default; /*  курсор в виде стрелки */
+  background: black;
+}

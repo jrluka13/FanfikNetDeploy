@@ -1,0 +1,14 @@
+/* html,
+body,
+#root {
+  height: 100%;
+  background: linear-gradient(-135deg, #c850c0, #4158d0);
+}
+
+.navbar {
+  /* background-color: #000000; */
+
+
+  .navbar{
+    background: blue;
+  }

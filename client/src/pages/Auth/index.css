@@ -1,0 +1,11 @@
+.divAuth {
+  background:#fff;
+  width: 40%;
+  margin-top: 20%;
+  border-radius: 25px;
+}
+
+.form-control{
+    border-radius: 25px;
+    background: #e6e6e6;;
+}
