@@ -17,6 +17,12 @@ export const useRoutes = (isAuthenticated) => {
         <Route path="/main" exact>
           <Main />
         </Route>
+        <Route path="/bookpage/:id" exact>
+        <BookPage />
+      </Route>
+      <Route path="/:id/">
+        <Chapter />
+      </Route>
         <Route path="/" exact>
           <Auth />
         </Route>

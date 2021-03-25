@@ -7,10 +7,14 @@ const router = Router();
 router.post("/generate/:id", auth, async (req, res) => {
   try {
     const userId = req.params.id;
-    const { title, genre, tags, shortDecr, chapters } = req.body;
-
+    const { title, genre, tags, shortDecr, chapters,urlImg } = req.body;
+    const comments = [];
+    const raiting = [];
     if (userId === 'undefined') {
       const book = new Book({
+        raiting,
+        comments,
+        urlImg,
         title,
         genre,
         tags,
@@ -24,6 +28,9 @@ router.post("/generate/:id", auth, async (req, res) => {
     }
     else {
       const book = new Book({
+        raiting,
+        comments,
+        urlImg,
         title,
         genre,
         tags,
@@ -34,7 +41,7 @@ router.post("/generate/:id", auth, async (req, res) => {
       await book.save();
       res.status(201).json({ book });
     }
-    
+
   } catch (error) {
     res.status(500).json({ message: "Something went wrong, try again" });
   }
@@ -43,6 +50,7 @@ router.post("/generate/:id", auth, async (req, res) => {
 router.get("/", auth, async (req, res) => {
   try {
     const books = await Book.find({ owner: req.user.userId });
+
     res.json(books);
   } catch (error) {
     res.status(500).json({ message: "Something went wrong, try again" });
@@ -52,16 +60,35 @@ router.get("/", auth, async (req, res) => {
 router.get("/books", async (req, res) => {
   try {
     const books = await Book.find();
+    
     res.json(books);
   } catch (error) {
     res.status(500).json({ message: "Something went wrong, try again" });
   }
 });
 
-router.get("/:id", auth, async (req, res) => {
+router.get("/:id",  async (req, res) => {
   try {
     const book = await Book.findById(req.params.id);
     res.json(book);
+  } catch (error) {
+    res.status(500).json({ message: "Something went wrong, try again" });
+  }
+});
+
+router.get("/:id/comments", async (req, res) => {
+  try {
+    const book = await Book.findById(req.params.id);
+    res.json(book.comments);
+  } catch (error) {
+    res.status(500).json({ message: "Something went wrong, try again" });
+  }
+});
+
+router.get("/:id/rait",  async (req, res) => {
+  try {
+    const book = await Book.findById(req.params.id);
+    res.json(book.raiting);
   } catch (error) {
     res.status(500).json({ message: "Something went wrong, try again" });
   }
@@ -97,6 +124,51 @@ router.put("/:id", auth, async (req, res) => {
     res.status(500).json({ message: "Something went wrong, try again" });
   }
 });
+router.put("/:id/:arr", auth, async (req, res) => {
+  try {
+    const obj = req.body;
+    // res.json(req.params.arr)
+    Book.findOneAndUpdate(
+      {
+        _id: req.params.id,
+      },
+      {
+        $addToSet: {
+          [req.params.arr]: obj,
+        },
+      },
+      function (err, model) {
+        res.json(model.chapters);
+      }
+    );
+  } catch (error) {
+    res.status(500).json({ message: "Something went wrong, try again" });
+  }
+});
+
+router.put("/:id/:obj/uprait", auth, async (req, res) => {
+  try {
+    const obj = req.body;
+    const field = req.params.obj;
+    res.json(obj)
+    Book.findOneAndUpdate(
+      {
+         "raiting.userId" : obj.userId,
+      },
+      {
+        $set: {
+          "raiting.$.rait": obj.rait,
+        },
+      },
+      function (err, model) {
+        res.json(model.chapters);
+      }
+    );
+  } catch (error) {
+    res.status(500).json({ message: "Something went wrong, try again" });
+  }
+});
+
 router.put("/:id/up", auth, async (req, res) => {
   try {
     Book.findByIdAndUpdate({ _id: req.params.id }, req.body).then(function () {

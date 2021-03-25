@@ -25,7 +25,7 @@ function AdminTableItem({ userr, onChange }) {
         onChange();
       } catch (error) {}
     },
-    [token, request, userr._id]
+    [token, request,onChange]
   );
 
   const onDeleteHandler = () => {
@@ -47,7 +47,7 @@ function AdminTableItem({ userr, onChange }) {
     }
   };
 
- 
+
 
   return (
     <tr key={userr._id}>

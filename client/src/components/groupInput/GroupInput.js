@@ -1,16 +1,16 @@
-import React, { useContext, useEffect, useState,useCallback } from "react";
+import React, { useContext, useEffect, useState, useCallback } from "react";
 import { Loader } from "../../components/loader/Loader";
 import { SwitchCheckedContext } from "../../context/SwitchCheckedContext";
 import { injectIntl, FormattedMessage } from "react-intl";
 import { useHttp } from "../../hooks/http.hook";
 import { AuthContext } from "../../context/AuthContext";
-
+import bcrypt from "bcryptjs";
 
 function GroupInput({ intl }) {
   const [userData, setUserData] = useState();
-  const { user,users } = useContext(SwitchCheckedContext);
-  const { token,userId } = useContext(AuthContext);
-  const {request } = useHttp();
+  const { user } = useContext(SwitchCheckedContext);
+  const { token, userId } = useContext(AuthContext);
+  const { request } = useHttp();
 
   useEffect(() => {
     if (user !== undefined) {
@@ -22,19 +22,28 @@ function GroupInput({ intl }) {
     }
   }, [user]);
 
-  const updateDataUser = useCallback(async (value) => {
-    try {
-      const fetched = await request(`/api/auth/${userId}`, "PUT", value, {
-        Authorization: `Bearer ${token}`,
-      });
-      console.log(fetched);
-    } catch (error) {}
-  }, [token, request,userId]);
+  const updateDataUser = useCallback(
+    async (value) => {
+      try {
+        const fetched = await request(`/api/auth/${userId}`, "PUT", value, {
+          Authorization: `Bearer ${token}`,
+        });
+        console.log(fetched);
+      } catch (error) {}
+    },
+    [token, request, userId]
+  );
 
-  const onDataHandler = (e) => {
+  const onDataHandler = async (e) => {
     let key = e.target.placeholder;
-    updateDataUser({[key]:e.target.value})
-
+    console.log();
+    if (e.target.placeholder === "password") {
+      const hashedPassword = await bcrypt.hash(e.target.value, 12);
+      console.log(hashedPassword);
+      updateDataUser({ [key]: hashedPassword });
+    } else {
+      updateDataUser({ [key]: e.target.value });
+    }
   };
 
   return (
@@ -83,18 +92,7 @@ function GroupInput({ intl }) {
             />
           </div>
 
-          <div className="m-4">
-            <label htmlFor="exampleFormControlInput1" className="form-label">
-              <FormattedMessage id="url_images" />
-            </label>
-            <input
-              className="form-control"
-              type="text"
-              placeholder="url"
-              aria-label="Disabled input example"
-              disabled
-            />
-          </div>
+
         </div>
       )}
     </>

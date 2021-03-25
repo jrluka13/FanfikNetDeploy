@@ -1,4 +1,7 @@
 {
+  "submit":"Submit",
+  "leave-comment": "Leave your comment",
+  "comment":"Write your comment",
   "superuser":"SuperUser",
   "status":"Status",
   "isadmin.btn":"Admin/!Admin",

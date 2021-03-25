@@ -7,19 +7,19 @@ import React, {
 } from "react";
 import { useHttp } from "../../hooks/http.hook";
 import { AuthContext } from "../../context/AuthContext";
-import { useParams } from "react-router";
+import { useLocation, useParams } from "react-router";
 import { Loader } from "../../components/loader/Loader";
 import { ChapterText } from "../../components/ChapterText/ChapterText";
-import {SwitchCheckedContext} from '../../context/SwitchCheckedContext'
+import { SwitchCheckedContext } from "../../context/SwitchCheckedContext";
 function Chapter() {
   const [book, setBook] = useState([]);
   const { loading, request } = useHttp();
   const { token } = useContext(AuthContext);
   let idBook = useParams();
   const { checked } = useContext(SwitchCheckedContext);
-
+  const params = useLocation();
   const divRef = useRef(null);
-
+  // console.log();
   // console.log(divRef.current);
   useEffect(() => {
     if (checked) {
@@ -44,12 +44,14 @@ function Chapter() {
     fetchBooks();
   }, [fetchBooks]);
 
+
+
   return (
     <div ref={divRef} className="mainDiv">
       {loading && book.length !== undefined ? (
         <Loader />
       ) : (
-        <ChapterText loading={loading} book={book} />
+        <ChapterText loading={loading} book={book} name={params.pathname.split("/")[2]} />
       )}
     </div>
   );

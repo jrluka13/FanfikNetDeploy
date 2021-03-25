@@ -1,4 +1,10 @@
-import React, { useContext, useEffect, useState, useRef, useCallback } from "react";
+import React, {
+  useContext,
+  useEffect,
+  useState,
+  useRef,
+  useCallback,
+} from "react";
 import Tagify from "@yaireo/tagify";
 import "./index.css";
 import "@yaireo/tagify/dist/tagify.css";
@@ -11,6 +17,7 @@ import ReactMde from "react-mde";
 import "react-mde/lib/styles/css/react-mde-all.css";
 import { SwitchCheckedContext } from "../../context/SwitchCheckedContext";
 import { useParams } from "react-router";
+import {storage} from '../../firebase'
 
 function CreateBook({ intl }) {
   const { checked } = useContext(SwitchCheckedContext);
@@ -20,21 +27,21 @@ function CreateBook({ intl }) {
   const imgLabelRef = useRef(null);
   const descrRef = useRef(null);
   const chapterRef = useRef(null);
-  const tagRef = useRef(null)
+  const tagRef = useRef(null);
   const userId = useParams().id;
-  console.log(userId);
-
+  const [img,setImg] = useState()
+  const [urlImg,setUrlImg] = useState()
 
   useEffect(() => {
     if (checked) {
       let theme = JSON.parse(localStorage.getItem("theme"));
 
       divRef.current.classList.add(theme["bg-dark"]);
-      titleRef.current.style.color = 'black'
-      genreRef.current.style.color = 'black'
-      imgLabelRef.current.style.color = 'black'
-      descrRef.current.style.color = 'black'
-      chapterRef.current.style.color = 'black'
+      titleRef.current.style.color = "black";
+      genreRef.current.style.color = "black";
+      imgLabelRef.current.style.color = "black";
+      descrRef.current.style.color = "black";
+      chapterRef.current.style.color = "black";
       // tagRef.current.style.setProperty('color','black','important')
       // console.log(tagRef.current.style);
     } else if (!checked) {
@@ -63,7 +70,7 @@ function CreateBook({ intl }) {
     tags: "",
     shortDecr: "",
     chapters: "",
-    userId
+    userId,
   });
   let arr = [];
   const { getRootProps, getInputProps } = useDropzone({
@@ -81,24 +88,24 @@ function CreateBook({ intl }) {
 
   useEffect(() => {
     let input = document.querySelector("input[name=basic]");
-      new Tagify(input, {
-        enforceWhitelist: true,
-        delimiters: null,
-        whitelist: [
-          "erotica",
-          "fantasy",
-          "sciense",
-          "health",
-          "sport",
-          "magic",
-          "horror",
-          "triller",
-        ],
-        callbacks: {
-          add: console.log, // callback when adding a tag
-          remove: console.log, // callback when removing a tag
-        },
-      });
+    new Tagify(input, {
+      enforceWhitelist: true,
+      delimiters: null,
+      whitelist: [
+        "erotica",
+        "fantasy",
+        "sciense",
+        "health",
+        "sport",
+        "magic",
+        "horror",
+        "triller",
+      ],
+      callbacks: {
+        add: console.log, // callback when adding a tag
+        remove: console.log, // callback when removing a tag
+      },
+    });
   }, []);
 
   const images = files.map((file) => (
@@ -115,25 +122,52 @@ function CreateBook({ intl }) {
     </div>
   ));
 
+  const getImg = useCallback(()=>{
+    if(files.length !== 0){
+      console.log(files[0]);
+      const uploadTask = storage.ref(`images/${files[0].name}`).put(files[0]);
+    uploadTask.on(
+      "state_changed",
+      snapshot => {
+
+      },
+      error => {
+        console.log(error);
+      },
+      () => {
+        storage
+          .ref("images")
+          .child(files[0].name)
+          .getDownloadURL()
+          .then(url => {
+            console.log(url);
+            setUrlImg(url)
+          });
+      }
+    );
+    }
+  },[files])
+  useEffect(()=>{
+    getImg()
+  },[getImg])
+
+
+
   const AddChapter = () => {
-    // setCounter((prevCount) => prevCount + 1);
-    // let text = document.getElementById("chapterText").value;
+
     let nameOfChapter = document.getElementById("nameOfChapter").value;
 
     arr.push(text);
     arr.map((el) => {
-      return(
-        setChapter((prev) => {
-          return [
-            ...prev,
-            {
-              name: nameOfChapter[0].toUpperCase() + nameOfChapter.slice(1),
-              text: el,
-            },
-          ];
-        })
-      )
-
+      return setChapter((prev) => {
+        return [
+          ...prev,
+          {
+            name: nameOfChapter[0].toUpperCase() + nameOfChapter.slice(1),
+            text: el,
+          },
+        ];
+      });
     });
     setText("");
     document.getElementById("nameOfChapter").value = "";
@@ -144,37 +178,42 @@ function CreateBook({ intl }) {
     let genre = document.getElementById("genre").value;
     let tags = JSON.parse(document.getElementById("Tags").value);
     let shortDecr = document.getElementById("shortDecr").value;
-   
+
     await setDataBook(() => {
       return {
+        urlImg,
         title,
         genre,
         tags,
         shortDecr,
-        chapters: chapter
+        chapters: chapter,
       };
     });
 
     console.log(dataBook);
   };
 
-  const createBook = useCallback(async ()=>{
+  const createBook = useCallback(async () => {
     try {
-      const data = await request(`/api/book/generate/${userId}`, "POST", dataBook, {
-        Authorization: `Bearer ${auth.token}`,
-      });
+      const data = await request(
+        `/api/book/generate/${userId}`,
+        "POST",
+        dataBook,
+        {
+          Authorization: `Bearer ${auth.token}`,
+        }
+      );
       console.log(data);
       setChapter([]);
     } catch (error) {}
-  },[request,auth.token,dataBook])
+  }, [request, auth.token, dataBook,userId]);
 
+  useEffect(() => {
 
-
-  useEffect( () => {
-    if(userId !== undefined){
-     createBook();
+    if (userId !== undefined) {
+      createBook();
     }
-  }, [dataBook,createBook]);
+  }, [dataBook, createBook,userId]);
   return (
     <div ref={divRef} className="mainDiv p-2 ">
       <div className="d-flex justify-content-center mt-2">
@@ -241,11 +280,12 @@ function CreateBook({ intl }) {
           <div className="form-floating ">
             <div
               className="form-control"
+
               id="img"
               style={{ minHeight: 20, height: "100%" }}
               {...getRootProps()}
             >
-              <input {...getInputProps()} />
+              <input   {...getInputProps()} />
               {images}
             </div>
             <label ref={imgLabelRef} htmlFor="img">

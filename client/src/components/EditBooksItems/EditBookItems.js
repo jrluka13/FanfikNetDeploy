@@ -13,20 +13,25 @@ import { AuthContext } from "../../context/AuthContext";
 import ReactMarkdown from "react-markdown";
 import ReactMde from "react-mde";
 import { SwitchCheckedContext } from "../../context/SwitchCheckedContext";
+import { useDropzone } from "react-dropzone";
+import { storage } from "../../firebase";
 
 import "react-mde/lib/styles/css/react-mde-all.css";
-import classes from  "./style.module.css";
+import classes from "./style.module.css";
 
 function EditBookItems({ idBook, book, onChange, intl }) {
   const { checked } = useContext(SwitchCheckedContext);
-  console.log(classes['btn-circle']);
   const [selectedTab, setSelectedTab] = useState("write");
   const [text, setText] = useState();
   const [tags, setTags] = useState([]);
+  const [files, setFiles] = useState([]);
+  const [urlImg, setUrlImg] = useState();
 
   const { request } = useHttp();
   const { token } = useContext(AuthContext);
 
+  const divImgRef = useRef(null);
+  const imgLabelRef = useRef(null);
   const divRef = useRef(null);
   const titleRef = useRef(null);
   const genreRef = useRef(null);
@@ -46,6 +51,12 @@ function EditBookItems({ idBook, book, onChange, intl }) {
     intl.formatMessage({ id: "genre-fantasy" }),
   ];
 
+  useEffect(() => {
+    if (checked) {
+      // imgLabelRef.current.style.color = "black";
+      // divImgRef.current.style.baground = "black"
+    }
+  }, [checked]);
   // useEffect(() => {
   //   if (checked) {
   //     // titleRef.current.style.color = 'black'
@@ -77,8 +88,8 @@ function EditBookItems({ idBook, book, onChange, intl }) {
         "horror",
         "triller",
       ],
-      dropdown:{
-        classname:'tags-look'
+      dropdown: {
+        classname: "tags-look",
       },
       callbacks: {
         add: onTagsHandler, // callback when adding a tag
@@ -96,9 +107,9 @@ function EditBookItems({ idBook, book, onChange, intl }) {
     } catch (error) {}
   };
 
-  const addChapter = async (id, obj) => {
+  const addChapter = async (id,arr, obj) => {
     try {
-      await request(`/api/book/${id}`, "PUT", obj, {
+      await request(`/api/book/${id}/${arr}`, "PUT", obj, {
         Authorization: `Bearer ${token}`,
       });
       onChange();
@@ -118,7 +129,7 @@ function EditBookItems({ idBook, book, onChange, intl }) {
       name: inputChapterRef.current.value,
       text,
     };
-    addChapter(idBook.id, obj);
+    addChapter(idBook.id,"chapters", obj);
   };
   const updateDataBook = useCallback(
     async (id, value) => {
@@ -145,6 +156,66 @@ function EditBookItems({ idBook, book, onChange, intl }) {
     updateDataBook(idBook.id, { tags });
   };
 
+  const { getRootProps, getInputProps } = useDropzone({
+    accept: "image/*",
+    onDrop: (acceptedFiles) => {
+      setFiles(
+        acceptedFiles.map((file) =>
+          Object.assign(file, {
+            preview: URL.createObjectURL(file),
+          })
+        )
+      );
+    },
+  });
+  const images = files.map((file) => (
+    <div key={file.name}>
+      <img
+        src={file.preview}
+        style={{
+          width: "100%",
+          marginTop: "10px",
+          borderRadius: "25px",
+        }}
+        alt="preview"
+      />
+    </div>
+  ));
+
+  const getImg = useCallback(() => {
+    if (files.length !== 0) {
+      console.log(files[0].name);
+      const uploadTask = storage.ref(`images/${files[0].name}`).put(files[0]);
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {},
+        (error) => {
+          console.log(error);
+        },
+        () => {
+          storage
+            .ref("images")
+            .child(files[0].name)
+            .getDownloadURL()
+            .then((url) => {
+              console.log(url);
+              setUrlImg(url);
+            });
+        }
+      );
+    }
+  }, [files]);
+  useEffect(() => {
+    getImg();
+  }, [getImg]);
+
+  useEffect(() => {
+    if (urlImg) {
+      updateDataBook(idBook.id, { urlImg });
+      // console.log(123);
+    }
+  }, [urlImg,idBook.id,updateDataBook]);
+
   if (book.tags === undefined) {
     return <Loader />;
   } else {
@@ -154,11 +225,34 @@ function EditBookItems({ idBook, book, onChange, intl }) {
           className="row mb-3"
           style={{ maxWidth: "1224px", minWidth: "250px" }}
         >
-          <div className="row g-0">
-            <div className="col-md-5">
-              <img src="" alt="" />
+          <div className="row m-2">
+            <div className="col-sm-4">
+              <div className="card" style={{ border: "none" }}>
+                <div className="card" style={{ border: "none" }}>
+                  <img src={book.urlImg} alt="" />
+                </div>
+              </div>
+              <div className="form-floating mt-2">
+                <div
+                  ref={divImgRef}
+                  className="form-control"
+                  id="img"
+                  style={{ minHeight: 20, height: "100%" }}
+                  {...getRootProps()}
+                >
+                  <input {...getInputProps()} />
+                  {images}
+                </div>
+                <label
+                  style={{ color: "black" }}
+                  ref={imgLabelRef}
+                  htmlFor="img"
+                >
+                  <FormattedMessage id="drag-picture" />
+                </label>
+              </div>
             </div>
-            <div className="col-md-7">
+            <div className="col-sm-8">
               <div className="card-body">
                 <div className="form-floating mb-2">
                   <input
@@ -251,7 +345,7 @@ function EditBookItems({ idBook, book, onChange, intl }) {
                     <FormattedMessage id="chapters" />{" "}
                   </h4>
                   <button
-                    className={`btn btn-success ${classes['btn-circle']} text-center  ms-2"`}
+                    className={`btn btn-success ${classes["btn-circle"]} text-center  ms-2"`}
                     // style={classes['btn-circle']}
                     onClick={onAddChapter}
                   >
@@ -265,7 +359,7 @@ function EditBookItems({ idBook, book, onChange, intl }) {
                   >
                     <p>{chapter.name} </p>
                     <button
-                      className={`btn btn-danger ${classes['btn-circle']} text-center ms-2`}
+                      className={`btn btn-danger ${classes["btn-circle"]} text-center ms-2`}
                       onClick={() => onDeleteHandler(index)}
                     >
                       -

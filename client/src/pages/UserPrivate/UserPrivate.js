@@ -8,7 +8,7 @@ import { Loader } from "../../components/loader/Loader";
 export const UserPrivate = () => {
   const [booksAll, setBooks] = useState([]);
   const [booksUser, setBooksUser] = useState([]);
-  const { loading, request } = useHttp();
+  const { request } = useHttp();
   const { token } = useContext(AuthContext);
   const userId = useParams().id;
   const fetchBooks = useCallback(async () => {
@@ -30,13 +30,17 @@ export const UserPrivate = () => {
     }
   }, [booksAll, userId]);
   if (booksUser.length === 0) {
-    return <Loader/>
+    return <Loader />;
   } else
     return (
       <div>
         <InputsUserPrivate />
+        <div className="d-flex justify-content-center">
 
-        <BooksList books={booksUser} userId={userId} onChange={fetchBooks}/>
+        <div className="mt-5">
+          <BooksList books={booksUser} userId={userId} onChange={fetchBooks} />
+        </div>
+        </div>
       </div>
     );
 };

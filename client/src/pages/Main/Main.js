@@ -16,6 +16,8 @@ export const Main = () => {
   const { token } = useContext(AuthContext);
   const { checked } = useContext(SwitchCheckedContext);
   const divRef = useRef(null);
+  const [books, setBooks] = useState([]);
+  console.log(books);
   useEffect(() => {
     if (checked) {
       let theme = JSON.parse(localStorage.getItem("theme"));
@@ -25,7 +27,6 @@ export const Main = () => {
       divRef.current.classList.remove("bg-dark");
     }
   }, [divRef, checked]);
-  const [books, setBooks] = useState([]);
 
   const fetchBooks = useCallback(async () => {
     try {
@@ -42,6 +43,8 @@ export const Main = () => {
   // useEffect(() => {
   //   console.log(books);
   // }, [books]);
+
+  
 
   return (
     <div ref={divRef} className="mainDiv  p-2">

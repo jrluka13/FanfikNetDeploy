@@ -85,18 +85,7 @@ function InputsUserPrivate() {
             />
           </div>
 
-          <div className="col-md m-4">
-            <label htmlFor="exampleFormControlInput1" className="form-label">
-              <FormattedMessage id="url_images" />
-            </label>
-            <input
-              className="form-control"
-              type="text"
-              placeholder="url"
-              aria-label="Disabled input example"
-              disabled
-            />
-          </div>
+         
         </div>{" "}
       </div>
     );
