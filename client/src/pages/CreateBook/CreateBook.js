@@ -17,7 +17,8 @@ import ReactMde from "react-mde";
 import "react-mde/lib/styles/css/react-mde-all.css";
 import { SwitchCheckedContext } from "../../context/SwitchCheckedContext";
 import { useParams } from "react-router";
-import {storage} from '../../firebase'
+import { storage } from "../../firebase";
+import { ImgDropzoneChapter } from "../../components/imgDropzoneChapter/imgDropzoneChapter";
 
 function CreateBook({ intl }) {
   const { checked } = useContext(SwitchCheckedContext);
@@ -29,8 +30,9 @@ function CreateBook({ intl }) {
   const chapterRef = useRef(null);
   const tagRef = useRef(null);
   const userId = useParams().id;
-  const [img,setImg] = useState()
-  const [urlImg,setUrlImg] = useState()
+  const [img, setImg] = useState();
+  const [urlImg, setUrlImg] = useState();
+  const [urlImgChapter, setUrlImgChapter] = useState();
 
   useEffect(() => {
     if (checked) {
@@ -63,6 +65,7 @@ function CreateBook({ intl }) {
 
   const { request } = useHttp();
   const [files, setFiles] = useState([]);
+
   const [chapter, setChapter] = useState([]);
   const [dataBook, setDataBook] = useState({
     title: "",
@@ -122,39 +125,34 @@ function CreateBook({ intl }) {
     </div>
   ));
 
-  const getImg = useCallback(()=>{
-    if(files.length !== 0){
+  const getImg = useCallback(() => {
+    if (files.length !== 0) {
       console.log(files[0]);
       const uploadTask = storage.ref(`images/${files[0].name}`).put(files[0]);
-    uploadTask.on(
-      "state_changed",
-      snapshot => {
-
-      },
-      error => {
-        console.log(error);
-      },
-      () => {
-        storage
-          .ref("images")
-          .child(files[0].name)
-          .getDownloadURL()
-          .then(url => {
-            console.log(url);
-            setUrlImg(url)
-          });
-      }
-    );
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {},
+        (error) => {
+          console.log(error);
+        },
+        () => {
+          storage
+            .ref("images")
+            .child(files[0].name)
+            .getDownloadURL()
+            .then((url) => {
+              console.log(url);
+              setUrlImg(url);
+            });
+        }
+      );
     }
-  },[files])
-  useEffect(()=>{
-    getImg()
-  },[getImg])
-
-
+  }, [files]);
+  useEffect(() => {
+    getImg();
+  }, [getImg]);
 
   const AddChapter = () => {
-
     let nameOfChapter = document.getElementById("nameOfChapter").value;
 
     arr.push(text);
@@ -163,8 +161,10 @@ function CreateBook({ intl }) {
         return [
           ...prev,
           {
+            default:nameOfChapter[0].toUpperCase() + nameOfChapter.slice(1),
             name: nameOfChapter[0].toUpperCase() + nameOfChapter.slice(1),
             text: el,
+            urlImgChapter,
           },
         ];
       });
@@ -206,14 +206,13 @@ function CreateBook({ intl }) {
       console.log(data);
       setChapter([]);
     } catch (error) {}
-  }, [request, auth.token, dataBook,userId]);
+  }, [request, auth.token, dataBook, userId]);
 
   useEffect(() => {
-
     if (userId !== undefined) {
       createBook();
     }
-  }, [dataBook, createBook,userId]);
+  }, [dataBook, createBook, userId]);
   return (
     <div ref={divRef} className="mainDiv p-2 ">
       <div className="d-flex justify-content-center mt-2">
@@ -280,12 +279,11 @@ function CreateBook({ intl }) {
           <div className="form-floating ">
             <div
               className="form-control"
-
               id="img"
               style={{ minHeight: 20, height: "100%" }}
               {...getRootProps()}
             >
-              <input   {...getInputProps()} />
+              <input {...getInputProps()} />
               {images}
             </div>
             <label ref={imgLabelRef} htmlFor="img">
@@ -330,7 +328,10 @@ function CreateBook({ intl }) {
               <FormattedMessage id="name-chapter" />
             </label>
           </div>
+          <ImgDropzoneChapter setUrlImgChapter={setUrlImgChapter} />
+
         </div>
+
         <div className="col-md">
           <div className="m-1 d-flex justify-content-center">
             <h3>
@@ -354,6 +355,7 @@ function CreateBook({ intl }) {
             />
           </div>
         </div>
+
         <div className="d-flex justify-content-center m-1">
           <button
             className="btn btn-info mt-5"

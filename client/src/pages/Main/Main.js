@@ -12,12 +12,11 @@ import { useHttp } from "../../hooks/http.hook";
 import { AuthContext } from "../../context/AuthContext";
 
 export const Main = () => {
-  const {  request } = useHttp();
+  const { request } = useHttp();
   const { token } = useContext(AuthContext);
   const { checked } = useContext(SwitchCheckedContext);
   const divRef = useRef(null);
   const [books, setBooks] = useState([]);
-  console.log(books);
   useEffect(() => {
     if (checked) {
       let theme = JSON.parse(localStorage.getItem("theme"));
@@ -43,8 +42,20 @@ export const Main = () => {
   // useEffect(() => {
   //   console.log(books);
   // }, [books]);
+  useEffect(() => {
+    books.forEach((data) => {
+      if (data.raiting.length !== 0) {
+        data.avgRait = data.raiting.reduce((a, b) => a + b.rait, 0);
+      } else {
+        data.avgRait = 0;
+      }
+    });
+    // setBooks(books)
+  });
 
-  
+  useEffect(() => {
+    console.log(books);
+  }, [books]);
 
   return (
     <div ref={divRef} className="mainDiv  p-2">

@@ -18,6 +18,7 @@
   "genre-science" : "Science",
   "genre-fantasy" : "Fantasy",
   "add-chapter.btn": "Add a new chapter",
+  "up-chapter.btn": "Update chapter",
   "create.btn": "Create",
   "title": "Title",
   "chapters":"Chapters",

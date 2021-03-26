@@ -4,15 +4,19 @@ import React, {
   useEffect,
   useState,
   useCallback,
+  useMemo,
 } from "react";
 import { SwitchCheckedContext } from "../../context/SwitchCheckedContext";
 import { useHistory } from "react-router-dom";
+import { Loader } from "../loader/Loader";
 
 export const CardOfItem = ({ data }) => {
   const [bookId, setBookId] = useState();
   let history = useHistory();
   const { checked } = useContext(SwitchCheckedContext);
   const divRef = useRef(null);
+  const [rait, setRait] = useState();
+
   useEffect(() => {
     if (checked) {
       let theme = JSON.parse(localStorage.getItem("theme"));
@@ -33,11 +37,18 @@ export const CardOfItem = ({ data }) => {
     if (bookId) {
       handleClick();
     }
-    // handleClick(bookId)
   }, [bookId, handleClick]);
-  // useEffect(()=>{
-  //   console.log(bookId);
-  // },[bookId])
+
+  // useEffect(() => {
+  //   if (data.avgRait) {
+  //     setRait(data?.avgRait);
+  //     console.log(123);
+  //   }
+  //   console.log(1234);
+  // }, [setRait]);
+  // useEffect(() => {
+  //   console.log(rait);
+  // }, [rait]);
   return (
     <div>
       <div className="row m-2">
@@ -54,9 +65,11 @@ export const CardOfItem = ({ data }) => {
               <h5 className="card-title">{data.title}</h5>
               <h6 className="card-subtitle mb-2 text-muted">{data.genre}</h6>
               <div>
-                <small className="card-subtitle mb-2 text-muted">
-                  Рейтинг : {}
-                </small>
+                {data.avgRait ? (
+                  <small className="card-subtitle mb-2 text-muted">
+                    Рейтинг : 1
+                  </small>
+                ) : null}
               </div>
 
               <p className="card-text">{data.shortDecr}</p>

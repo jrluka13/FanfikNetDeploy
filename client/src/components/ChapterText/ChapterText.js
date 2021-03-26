@@ -13,9 +13,20 @@ export const ChapterText = ({ loading, book, name }) => {
         {book.chapters.map((chapter, index) => {
           if (chapter.name === name) {
             return (
-              <div className="p-3" key={index}>
+              <div className="p-3 row" key={index}>
                 <h1 className="text-center mt-2 mb-3">{chapter.name}</h1>
-                <p className="fs-4">{chapter.text}</p>
+                <p>
+                  {chapter.urlImgChapter && (
+                    <img
+                      style={{ width: "30%", float: "left" }}
+                      className="rounded-3 me-2"
+                      src={chapter.urlImgChapter}
+                      alt="img"
+                    />
+                  )}
+                  {chapter.text}
+                </p>
+
               </div>
             );
           }
@@ -25,7 +36,10 @@ export const ChapterText = ({ loading, book, name }) => {
             {book.chapters.map((chapter, index) => {
               return (
                 <li className="page-item">
-                  <Link className="page-link" to={`/${book._id}/${chapter.name}`}>
+                  <Link
+                    className="page-link"
+                    to={`/${book._id}/${chapter.name}`}
+                  >
                     {index + 1}
                   </Link>
                 </li>

@@ -12,20 +12,21 @@ import { useHttp } from "../../hooks/http.hook";
 import { AuthContext } from "../../context/AuthContext";
 import ReactMarkdown from "react-markdown";
 import ReactMde from "react-mde";
-import { SwitchCheckedContext } from "../../context/SwitchCheckedContext";
 import { useDropzone } from "react-dropzone";
 import { storage } from "../../firebase";
 
 import "react-mde/lib/styles/css/react-mde-all.css";
 import classes from "./style.module.css";
+import { ImgDropzoneChapter } from "../imgDropzoneChapter/imgDropzoneChapter";
 
 function EditBookItems({ idBook, book, onChange, intl }) {
-  const { checked } = useContext(SwitchCheckedContext);
   const [selectedTab, setSelectedTab] = useState("write");
   const [text, setText] = useState();
   const [tags, setTags] = useState([]);
   const [files, setFiles] = useState([]);
   const [urlImg, setUrlImg] = useState();
+  const [urlImgChapter,setUrlImgChapter] = useState()
+  const [defaultName,setDefaultName] = useState()
 
   const { request } = useHttp();
   const { token } = useContext(AuthContext);
@@ -41,7 +42,6 @@ function EditBookItems({ idBook, book, onChange, intl }) {
   const chapterRef = useRef(null);
   const addChapterRef = useRef(null);
   const inputChapterRef = useRef(null);
-
   const placeholderTags = intl.formatMessage({ id: "write-some-tags" });
   const genres = [
     intl.formatMessage({ id: "genre-horor" }),
@@ -51,25 +51,7 @@ function EditBookItems({ idBook, book, onChange, intl }) {
     intl.formatMessage({ id: "genre-fantasy" }),
   ];
 
-  useEffect(() => {
-    if (checked) {
-      // imgLabelRef.current.style.color = "black";
-      // divImgRef.current.style.baground = "black"
-    }
-  }, [checked]);
-  // useEffect(() => {
-  //   if (checked) {
-  //     // titleRef.current.style.color = 'black'
-  //     // genreRef.current.style.color = 'black'
-  //     // imgLabelRef.current.style.color = 'black'
-  //     // descrRef.current.style.color = 'black'
-  //     // chapterRef.current.style.color = 'black'
-  //     // tagRef.current.style.setProperty('color','black','important')
-  //     // console.log(tagRef.current);
-  //   } else if (!checked) {
-  //     // divRef.current.classList.remove("bg-dark");
-  //   }
-  // }, [divRef, checked]);
+
 
   useEffect(() => {
     let input = document.querySelector("input[name=basic]");
@@ -116,6 +98,19 @@ function EditBookItems({ idBook, book, onChange, intl }) {
     } catch (error) {}
   };
 
+  const updateChapter = useCallback(
+    async (id,value) => {
+      try {
+        await request(`/api/book/${id}/chapter/obj`, "PUT", value, {
+          Authorization: `Bearer ${token}`,
+        });
+        onChange();
+        // getCommetsBook();
+      } catch (error) {}
+    },
+    [token, request,onChange]
+  );
+
   const onDeleteHandler = (index) => {
     deleteChapter(idBook.id, index);
   };
@@ -128,9 +123,21 @@ function EditBookItems({ idBook, book, onChange, intl }) {
     let obj = {
       name: inputChapterRef.current.value,
       text,
+      urlImgChapter
     };
     addChapter(idBook.id,"chapters", obj);
   };
+
+  const UpChapter = () => {
+    let obj = {
+      name: inputChapterRef.current.value,
+      text,
+      urlImgChapter,
+      defaultName
+    };
+    updateChapter(idBook.id,obj);
+  };
+
   const updateDataBook = useCallback(
     async (id, value) => {
       try {
@@ -142,6 +149,8 @@ function EditBookItems({ idBook, book, onChange, intl }) {
     },
     [token, request, onChange]
   );
+
+
 
   const onDataHandler = (e) => {
     let key = e.target.id;
@@ -212,9 +221,15 @@ function EditBookItems({ idBook, book, onChange, intl }) {
   useEffect(() => {
     if (urlImg) {
       updateDataBook(idBook.id, { urlImg });
-      // console.log(123);
     }
   }, [urlImg,idBook.id,updateDataBook]);
+
+  const addInfo=(chapter)=>{
+    inputChapterRef.current.value = chapter.name
+    setText(chapter.text)
+    setDefaultName(chapter.default);
+  }
+
 
   if (book.tags === undefined) {
     return <Loader />;
@@ -354,8 +369,10 @@ function EditBookItems({ idBook, book, onChange, intl }) {
                 </span>
                 {book.chapters.map((chapter, index) => (
                   <span
+                    onClick={()=>addInfo(chapter)}
                     className="d-flex justify-content-between mt-2"
                     key={index}
+                    style={{cursor:"pointer"}}
                   >
                     <p>{chapter.name} </p>
                     <button
@@ -397,6 +414,8 @@ function EditBookItems({ idBook, book, onChange, intl }) {
                 <FormattedMessage id="name-chapter" />
               </label>
             </div>
+            <img src={book.chapters.urlImgChapter} alt="" />
+            <ImgDropzoneChapter setUrlImgChapter={setUrlImgChapter} />
           </div>
           <div className="col-md">
             <div className="m-1 d-flex justify-content-center">
@@ -423,11 +442,18 @@ function EditBookItems({ idBook, book, onChange, intl }) {
           </div>
           <div className="d-flex justify-content-center mb-5">
             <button
-              className="btn btn-info mt-5"
+              className="btn btn-success mt-5"
               onClick={AddChapter}
               style={{ width: "20%" }}
             >
               <FormattedMessage id="add-chapter.btn" />
+            </button>
+            <button
+              className="btn btn-info ms-4 mt-5"
+              onClick={UpChapter}
+              style={{ width: "20%" }}
+            >
+              <FormattedMessage id="up-chapter.btn" />
             </button>
           </div>
         </div>

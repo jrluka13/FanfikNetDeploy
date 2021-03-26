@@ -60,7 +60,20 @@ router.get("/", auth, async (req, res) => {
 router.get("/books", async (req, res) => {
   try {
     const books = await Book.find();
-    
+
+    // books[0].avgRait = 4;
+    //  books.map((data) => {
+    //   if (data.raiting.length !== 0) {
+
+    //     data.avgRait = data.raiting.reduce((a, b) => (a + b.rait),0);
+    //     console.log(data.avgRait);
+
+    //   }else{
+    //     console.log(1234);
+    //     data.avgRait = 0;
+    //   }
+    // });
+    // console.log(books);
     res.json(books);
   } catch (error) {
     res.status(500).json({ message: "Something went wrong, try again" });
@@ -168,6 +181,33 @@ router.put("/:id/:obj/uprait", auth, async (req, res) => {
     res.status(500).json({ message: "Something went wrong, try again" });
   }
 });
+
+router.put("/:id/chapter/obj", auth, async (req, res) => {
+  try {
+    const obj = req.body;
+    res.json(obj)
+    Book.findOneAndUpdate(
+      {
+         "chapters.default" : obj.defaultName,
+      },
+      {
+        $set: {
+          "chapters.$.name" : obj.name,
+          "chapters.$.text" : obj.text,
+          "chapters.$.urlImgChapter" : obj.urlImgChapter,
+
+        },
+      },
+      function (err, model) {
+        res.json(model.chapters);
+      }
+    );
+  } catch (error) {
+    res.status(500).json({ message: "Something went wrong, try again" });
+  }
+});
+
+
 
 router.put("/:id/up", auth, async (req, res) => {
   try {
