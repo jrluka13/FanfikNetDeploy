@@ -20,6 +20,8 @@
     "react-rating-stars-component": "^2.2.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
+    "sorttable": "^1.0.2",
+    "table-sort-js": "^1.1.6-d",
     "tablesort": "^5.2.1",
     "web-vitals": "^1.1.0"
   },

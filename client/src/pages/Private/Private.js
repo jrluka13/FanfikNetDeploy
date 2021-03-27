@@ -1,17 +1,32 @@
-import React, { useCallback, useContext, useEffect, useState, useRef } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+  useRef,
+} from "react";
 import { useHttp } from "../../hooks/http.hook";
 import { AuthContext } from "../../context/AuthContext";
 import { Loader } from "../../components/loader/Loader";
 import { BooksList } from "../../components/BooksList/BooksList";
 import { FormattedMessage } from "react-intl";
 import GroupInput from "../../components/groupInput/GroupInput";
-import TableSort from "tablesort";
+// import TableSort from "tablesort";
+// import 'table-sort-js'
 
+// import './style.css'
 
 export const Private = () => {
   const [books, setBooks] = useState([]);
   const { loading, request } = useHttp();
   const { token } = useContext(AuthContext);
+  // const tableRef = useRef();
+  // if (tableRef.current !== undefined && tableRef.current !== null ) {
+  //   new TableSort(tableRef.current);
+  //   console.log(tableRef.current);
+  // } else {
+  //   console.log(21);
+  // }
   // const tableRef = useRef();
   // console.log(tableRef.current);
   // if (tableRef.current === undefined || tableRef.current === null) {
@@ -60,7 +75,6 @@ export const Private = () => {
                 <Loader />
               ) : (
                 <div className="mt-2">
-
                   {!loading && (
                     <BooksList books={books} onChange={fetchBooks} />
                   )}

@@ -2,8 +2,9 @@ import React, { useRef } from "react";
 import { FormattedMessage } from "react-intl";
 import { Link, useParams } from "react-router-dom";
 import { BookItem } from "../BookItem/BookItem";
+import "sorttable";
 
-export const BooksList = ({ books,userId, onChange }) => {
+export const BooksList = ({ books, userId, onChange }) => {
   // const tableRef = useRef();
   // if (tableRef.current !== undefined) {
   //   // new TableSort(tableRef);
@@ -26,7 +27,7 @@ export const BooksList = ({ books,userId, onChange }) => {
   return (
     <table
       id="tableRef"
-      className="table table-light table-striped table-hover"
+      className="table table-light table-striped table-hover sortable"
     >
       <thead>
         <tr>

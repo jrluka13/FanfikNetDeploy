@@ -140,6 +140,17 @@ router.put("/:id", auth, async (req, res) => {
     res.status(500).json({ message: "Something went wrong, try again" });
   }
 });
+router.put("/:id/up", auth, async (req, res) => {
+  try {
+    Book.findByIdAndUpdate({ _id: req.params.id }, req.body).then(function () {
+      Book.findOne({ _id: req.params.id }).then(function (books) {
+        res.json(books);
+      });
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Something went wrong, try again" });
+  }
+});
 router.put("/:id/:arr", auth, async (req, res) => {
   try {
     const obj = req.body;
@@ -212,17 +223,7 @@ router.put("/:id/chapter/obj", auth, async (req, res) => {
 
 
 
-router.put("/:id/up", auth, async (req, res) => {
-  try {
-    Book.findByIdAndUpdate({ _id: req.params.id }, req.body).then(function () {
-      Book.findOne({ _id: req.params.id }).then(function (books) {
-        res.json(books);
-      });
-    });
-  } catch (error) {
-    res.status(500).json({ message: "Something went wrong, try again" });
-  }
-});
+
 
 router.delete("/:id/:index", auth, async (req, res) => {
   try {
