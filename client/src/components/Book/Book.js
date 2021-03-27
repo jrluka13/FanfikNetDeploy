@@ -185,7 +185,7 @@ function Book({ book, idBook }) {
                     size={24}
                     activeColor="#ffd700"
                   />
-                ) : (
+                ) : user?._id === undefined ? null : (
                   <ReactStars
                     key={starsKey}
                     count={5}

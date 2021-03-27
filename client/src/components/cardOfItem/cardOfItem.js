@@ -8,7 +8,7 @@ import React, {
 } from "react";
 import { SwitchCheckedContext } from "../../context/SwitchCheckedContext";
 import { useHistory } from "react-router-dom";
-import { Loader } from "../loader/Loader";
+import { FormattedMessage } from "react-intl";
 
 export const CardOfItem = ({ data }) => {
   const [bookId, setBookId] = useState();
@@ -39,6 +39,11 @@ export const CardOfItem = ({ data }) => {
     }
   }, [bookId, handleClick]);
 
+  function getRaiting() {
+    // debugger
+    return data.avgRait;
+  }
+
   // useEffect(() => {
   //   if (data.avgRait) {
   //     setRait(data?.avgRait);
@@ -65,11 +70,10 @@ export const CardOfItem = ({ data }) => {
               <h5 className="card-title">{data.title}</h5>
               <h6 className="card-subtitle mb-2 text-muted">{data.genre}</h6>
               <div>
-                {data.avgRait ? (
-                  <small className="card-subtitle mb-2 text-muted">
-                    Рейтинг : 1
-                  </small>
-                ) : null}
+                <small className="card-subtitle mb-2 text-muted">
+                  <FormattedMessage id="raiting" /> :{" "}
+                  {<span>{getRaiting()}</span>}
+                </small>
               </div>
 
               <p className="card-text">{data.shortDecr}</p>
@@ -79,7 +83,7 @@ export const CardOfItem = ({ data }) => {
                 }}
                 className="btn btn-primary"
               >
-                Read
+                <FormattedMessage id="read.btn" />
               </button>
             </div>
           </div>

@@ -62,11 +62,14 @@ router.get("/books", async (req, res) => {
     const books = await Book.find();
 
     // books[0].avgRait = 4;
-    //  books.map((data) => {
+    // console.log(books);
+    // books[0]['test'] = '11111111111111111';
+    //  books.map((data, index) => {
     //   if (data.raiting.length !== 0) {
 
-    //     data.avgRait = data.raiting.reduce((a, b) => (a + b.rait),0);
+    //     books[index]['avgRait'] = data.raiting.reduce((a, b) => (a + b.rait),0);
     //     console.log(data.avgRait);
+    //     console.log(books);
 
     //   }else{
     //     console.log(1234);

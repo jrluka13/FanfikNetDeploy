@@ -17,6 +17,7 @@ export const Main = () => {
   const { checked } = useContext(SwitchCheckedContext);
   const divRef = useRef(null);
   const [books, setBooks] = useState([]);
+  const [arrBooks,setArrBooks] = useState([])
   useEffect(() => {
     if (checked) {
       let theme = JSON.parse(localStorage.getItem("theme"));
@@ -43,23 +44,33 @@ export const Main = () => {
   //   console.log(books);
   // }, [books]);
   useEffect(() => {
-    books.forEach((data) => {
+    let arr = []
+    let obj = {};
+    books.map((data) => {
       if (data.raiting.length !== 0) {
-        data.avgRait = data.raiting.reduce((a, b) => a + b.rait, 0);
+        obj = {
+          ...data,
+          avgRait : data.raiting.reduce((a, b) => a + b.rait, 0)
+        }
+        arr.push(obj)
+
       } else {
-        data.avgRait = 0;
+        obj = {
+          ...data,
+          avgRait : 0
+        }
+        arr.push(obj)
       }
     });
-    // setBooks(books)
-  });
+    arr.sort((a, b) => a.avgRait < b.avgRait ? 1 : -1);
+    setArrBooks(arr)
+  }, [books,setArrBooks]);
 
-  useEffect(() => {
-    console.log(books);
-  }, [books]);
+ 
 
   return (
     <div ref={divRef} className="mainDiv  p-2">
-      {books.map((book, index) => {
+      {arrBooks.map((book, index) => {
         return (
           <CardOfItem
             // title={card.title}
