@@ -8,7 +8,7 @@ import { Loader } from "../../components/loader/Loader";
 export const UserPrivate = () => {
   const [booksAll, setBooks] = useState([]);
   const [booksUser, setBooksUser] = useState([]);
-  const { request } = useHttp();
+  const {loading,request } = useHttp();
   const { token } = useContext(AuthContext);
   const userId = useParams().id;
   const fetchBooks = useCallback(async () => {
@@ -29,7 +29,7 @@ export const UserPrivate = () => {
       setBooksUser(arrBooks);
     }
   }, [booksAll, userId]);
-  if (booksUser.length === 0) {
+  if (loading) {
     return <Loader />;
   } else
     return (

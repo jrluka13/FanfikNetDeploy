@@ -360,7 +360,7 @@ function CreateBook({ intl }) {
           <button
             className="btn btn-info mt-5"
             onClick={AddChapter}
-            style={{ width: "20%" }}
+            style={{ width: "30%" }}
           >
             <FormattedMessage id="add-chapter.btn" />
           </button>
@@ -376,11 +376,11 @@ function CreateBook({ intl }) {
           </div>
         );
       })}
-      <div className="d-flex justify-content-end mt-5">
+      <div className="d-flex justify-content-center mt-5">
         <button
           className="btn btn-success"
           onClick={postBook}
-          style={{ width: "10%" }}
+          style={{ width: "100px" }}
         >
           <FormattedMessage id="create.btn" />
         </button>

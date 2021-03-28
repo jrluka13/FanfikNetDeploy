@@ -10,6 +10,7 @@ import { AuthContext } from "../../context/AuthContext";
 import locales from "../../locales/locales";
 import { FormattedMessage } from "react-intl";
 import { useHttp } from "../../hooks/http.hook";
+import { SearchBox } from "react-instantsearch/dom";
 
 export const Navbar = ({
   value,
@@ -163,6 +164,7 @@ export const Navbar = ({
                 aria-label="Search"
                 placeholder={placeholder}
               />
+              {/* <SearchBox  type="search" /> */}
               <button
                 className="btn btn-outline-success"
                 type="submit"

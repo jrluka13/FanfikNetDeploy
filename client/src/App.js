@@ -10,20 +10,28 @@ import { IntlProvider } from "react-intl";
 import locales from "./locales/locales";
 import ru from "./locales/ru.json";
 import en from "./locales/en.json";
+import algoliasearch from "algoliasearch/lite";
+import { InstantSearch } from "react-instantsearch/dom";
 
 const messages = {
   [locales.RU]: ru,
   [locales.EN]: en,
 };
+
+const searchClient = algoliasearch(
+  "LO7QGN0AHP",
+  "e909282272c391f812b5214f9fb49197"
+);
+
 function App() {
   const [currentLocale, setCurrentLocale] = useState(
     localStorage.getItem("locale") || locales.EN
   );
   const [checked, setChecked] = useState(null);
-  const [user,setUser] = useState();
-  const [users,setUsers] = useState();
+  const [user, setUser] = useState();
+  const [users, setUsers] = useState();
 
-  const [isAdmin,setAdmin] = useState();
+  const [isAdmin, setAdmin] = useState();
   const updateLocale = useCallback(
     (value) => {
       setCurrentLocale(value);
@@ -38,16 +46,17 @@ function App() {
   const updateData = (value) => {
     setChecked(value);
   };
-  const findUser = (value)=>{
-    setUser(value)
-  }
-  const findUsers = (value)=>{
-    setUsers(value)
-  }
-  const isLogin=(value)=>{
-    setAdmin(value)
-  }
-  
+  const findUser = (value) => {
+    setUser(value);
+  };
+  const findUsers = (value) => {
+    setUsers(value);
+  };
+  const isLogin = (value) => {
+    setAdmin(value);
+  };
+  // const Hit = ({ hit }) => <p>{hit.name}</p>;
+
   if (!ready) {
     return <Loader />;
   }
@@ -63,10 +72,12 @@ function App() {
             isAuthenticated,
           }}
         >
-          <SwitchCheckedContext.Provider value={{ checked,user,users }}>
+          <SwitchCheckedContext.Provider value={{ checked, user, users }}>
             <BrowserRouter>
-              {
-                // !isAuthenticated &&
+              <InstantSearch
+                indexName="demo_ecommerce"
+                searchClient={searchClient}
+              >
                 <Navbar
                   value={currentLocale}
                   onChange={updateLocale}
@@ -76,11 +87,11 @@ function App() {
                   isLogin={isLogin}
                   userAdmin={isAdmin}
                 />
-              }
 
-              <div className="container pt-5 d-flex justify-content-center">
-                {routes}
-              </div>
+                <div className="container pt-5 d-flex justify-content-center">
+                  {routes}
+                </div>
+              </InstantSearch>
             </BrowserRouter>
           </SwitchCheckedContext.Provider>
         </AuthContext.Provider>

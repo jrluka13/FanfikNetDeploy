@@ -5,16 +5,6 @@ import { BookItem } from "../BookItem/BookItem";
 import "sorttable";
 
 export const BooksList = ({ books, userId, onChange }) => {
-  // const tableRef = useRef();
-  // if (tableRef.current !== undefined) {
-  //   // new TableSort(tableRef);
-  //   console.log(tableRef.current);
-  // } else {
-  //   console.log(21);
-  // }
-
-  // console.log(tableRef.current);
-
   if (!books.length) {
     return (
       <div className="d-flex justify-content-center">
@@ -27,7 +17,7 @@ export const BooksList = ({ books, userId, onChange }) => {
   return (
     <table
       id="tableRef"
-      className="table table-light table-striped table-hover sortable"
+      className="table sortable table-light table-striped table-hover sortable"
     >
       <thead>
         <tr>

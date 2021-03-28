@@ -116,7 +116,7 @@ function Book({ book, idBook }) {
   useEffect(() => {
     getCommetsBook();
   }, [getCommetsBook]);
-  // setInterval(()=>getCommetsBook(),10000)
+  setInterval(()=>getCommetsBook(),10000)
 
   const updateDataBook = useCallback(
     async (id, arr, value) => {

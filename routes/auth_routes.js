@@ -22,21 +22,29 @@ router.post(
           message: "Invalid data",
         });
       }
-      const { email, password } = req.body;
-      const name = "";
+      const { email, password, name } = req.body;
+      if (name === undefined) {
+        const name = "";
+      }
       const isLogin = false;
       const status = "unblock";
       const candidate = await User.findOne({ email });
       const superUser = false;
-      if (candidate) {
+      if (candidate && name === "") {
         return res.status(400).json({ message: "Such user already exists" });
       }
 
       const hashedPassword = await bcrypt.hash(password, 12);
-      const user = new User({ email, password: hashedPassword, name, isLogin,status,superUser });
+      const user = new User({
+        email,
+        password: hashedPassword,
+        name,
+        isLogin,
+        status,
+        superUser,
+      });
 
       await user.save();
-
       res.status(201).json({ message: "User created" });
     } catch (error) {
       res.status(500).json({ message: "Something went wrong, try again" });
@@ -76,14 +84,14 @@ router.post(
         expiresIn: "10 days",
       });
 
-      res.json({ token, userId: user.id,status:user.status });
+      res.json({ token, userId: user.id, status: user.status });
     } catch (error) {
       res.status(500).json({ message: "Something went wrong, try again" });
     }
   }
 );
 
-router.get("/", auth, async (req, res) => {
+router.get("/",  async (req, res) => {
   try {
     const data = await User.find();
     res.json(data);
@@ -106,7 +114,6 @@ router.put("/:id", auth, async (req, res) => {
 
 router.delete("/:id", auth, async (req, res) => {
   try {
-
     User.findByIdAndRemove({ _id: req.params.id }).then(function (users) {
       res.json(users);
     });

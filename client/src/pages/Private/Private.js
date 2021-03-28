@@ -11,32 +11,12 @@ import { Loader } from "../../components/loader/Loader";
 import { BooksList } from "../../components/BooksList/BooksList";
 import { FormattedMessage } from "react-intl";
 import GroupInput from "../../components/groupInput/GroupInput";
-// import TableSort from "tablesort";
-// import 'table-sort-js'
-
-// import './style.css'
 
 export const Private = () => {
   const [books, setBooks] = useState([]);
   const { loading, request } = useHttp();
   const { token } = useContext(AuthContext);
-  // const tableRef = useRef();
-  // if (tableRef.current !== undefined && tableRef.current !== null ) {
-  //   new TableSort(tableRef.current);
-  //   console.log(tableRef.current);
-  // } else {
-  //   console.log(21);
-  // }
-  // const tableRef = useRef();
-  // console.log(tableRef.current);
-  // if (tableRef.current === undefined || tableRef.current === null) {
-  //   console.log(12);
-  //   console.log(tableRef.current);
-  // } else {
-  //   new TableSort(tableRef);
 
-  //   console.log(21);
-  // }
   const fetchBooks = useCallback(async () => {
     try {
       const fetched = await request("/api/book", "GET", null, {
@@ -68,9 +48,7 @@ export const Private = () => {
                   <FormattedMessage id="my-books" />
                 </h2>
               </span>
-              {/* <table ref={tableRef} className="table table-light table-striped table-hover">
 
-              </table> */}
               {loading ? (
                 <Loader />
               ) : (

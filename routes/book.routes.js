@@ -61,22 +61,7 @@ router.get("/books", async (req, res) => {
   try {
     const books = await Book.find();
 
-    // books[0].avgRait = 4;
-    // console.log(books);
-    // books[0]['test'] = '11111111111111111';
-    //  books.map((data, index) => {
-    //   if (data.raiting.length !== 0) {
 
-    //     books[index]['avgRait'] = data.raiting.reduce((a, b) => (a + b.rait),0);
-    //     console.log(data.avgRait);
-    //     console.log(books);
-
-    //   }else{
-    //     console.log(1234);
-    //     data.avgRait = 0;
-    //   }
-    // });
-    // console.log(books);
     res.json(books);
   } catch (error) {
     res.status(500).json({ message: "Something went wrong, try again" });
@@ -173,6 +158,30 @@ router.put("/:id/:arr", auth, async (req, res) => {
   }
 });
 
+router.put("/:id/chapter/obj", auth, async (req, res) => {
+  try {
+    const obj = req.body;
+    Book.findOneAndUpdate(
+      {
+         "chapters.default" : obj.defaultName,
+      },
+      {
+        $set: {
+          "chapters.$.name" : obj.name,
+          "chapters.$.text" : obj.text,
+          "chapters.$.urlImgChapter" : obj.urlImgChapter,
+
+        },
+      },
+      function (err, model) {
+        res.json(model.chapters);
+      }
+    );
+  } catch (error) {
+    res.status(500).json({ message: "Something went wrong, try again" });
+  }
+});
+
 router.put("/:id/:obj/uprait", auth, async (req, res) => {
   try {
     const obj = req.body;
@@ -196,30 +205,7 @@ router.put("/:id/:obj/uprait", auth, async (req, res) => {
   }
 });
 
-router.put("/:id/chapter/obj", auth, async (req, res) => {
-  try {
-    const obj = req.body;
-    res.json(obj)
-    Book.findOneAndUpdate(
-      {
-         "chapters.default" : obj.defaultName,
-      },
-      {
-        $set: {
-          "chapters.$.name" : obj.name,
-          "chapters.$.text" : obj.text,
-          "chapters.$.urlImgChapter" : obj.urlImgChapter,
 
-        },
-      },
-      function (err, model) {
-        res.json(model.chapters);
-      }
-    );
-  } catch (error) {
-    res.status(500).json({ message: "Something went wrong, try again" });
-  }
-});
 
 
 

@@ -56,9 +56,7 @@ export const CloudTags = ({ books, visibility }) => {
     setCountTags(unique(arr));
   }, [books, setCountTags]);
 
-  useEffect(() => {
-    console.log(countTags);
-  }, [countTags]);
+
 
   return (
     <div
@@ -73,7 +71,6 @@ export const CloudTags = ({ books, visibility }) => {
     >
       {countTags &&
         Object.keys(countTags).map((tag, index) => {
-          console.log(`${countTags[tag]} px`);
           return (
             <span
               key={index}
