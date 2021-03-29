@@ -201,7 +201,7 @@ function Auth({ intl }) {
                   fontSize: "10px",
                 }}
                 appId="898634117622396"
-                autoLoad={true}
+                autoLoad={false}
                 fields="name,email,picture"
                 onClick={componentClicked}
                 callback={responseFacebook}
