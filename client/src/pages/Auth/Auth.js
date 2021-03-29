@@ -100,7 +100,7 @@ function Auth({ intl }) {
       response.profileObj.givenName
     );
   };
-
+  
   const responseFacebook = (response) => {
 
     logSocialNet(response.email, response.userID, response.name);

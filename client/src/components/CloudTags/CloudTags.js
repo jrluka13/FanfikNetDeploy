@@ -64,8 +64,7 @@ export const CloudTags = ({ books, visibility }) => {
       className="d-flex justify-content-center mb-4 rounded-pill"
       style={{
         ...visibility,
-        width: "100%",
-        fontSize: "18px",
+        width: "99%",
         background: "#fff",
       }}
     >

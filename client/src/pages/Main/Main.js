@@ -82,7 +82,7 @@ export const Main = () => {
         <div style={{visibility:"hidden"}} ref={divRef} className="mainDiv  p-2">
           {arrBooks.map((book, index) => {
             return (
-              
+
               <CardOfItem
                 // title={card.title}
                 // subtitle={card.subtitle}

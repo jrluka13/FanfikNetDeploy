@@ -17,7 +17,7 @@ export const BooksList = ({ books, userId, onChange }) => {
   return (
     <table
       id="tableRef"
-      className="table sortable table-light table-striped table-hover sortable"
+      className="table table-sm table-responsive sortable table-light table-striped table-hover sortable"
     >
       <thead>
         <tr>

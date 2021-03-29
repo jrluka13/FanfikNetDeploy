@@ -8,7 +8,7 @@ function AdminTable({ users, onChange }) {
     return <Loader />;
   } else {
     return (
-      <table className="table table-light table-striped table-hover">
+      <table className="table table-sm table-responsive table-light table-striped table-hover">
         <thead className="table-light">
           <tr>
             <th scope="col">Id</th>

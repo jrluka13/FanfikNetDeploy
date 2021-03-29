@@ -132,10 +132,13 @@ export const Navbar = ({
           >
             <span className="navbar-toggler-icon"></span>
           </button>
-          <div className="collapse navbar-collapse" id="navbarSupportedContent">
+          <div
+            className="navbar-collapse collapse show"
+            id="navbarSupportedContent"
+          >
             {isAuthenticated ? (
-              <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-                <li className="nav-item">
+              <ul className="navbar-nav flex-row flex-wrap me-auto mb-2 mb-lg-0">
+                <li className="nav-item me-3">
                   <NavLink
                     className="nav-link "
                     aria-current="page"
@@ -157,14 +160,16 @@ export const Navbar = ({
                 )}
               </ul>
             ) : null}
-            <form className="d-flex">
-              <input
-                className="form-control me-2"
-                type="search"
-                aria-label="Search"
-                placeholder={placeholder}
-              />
-              {/* <SearchBox  type="search" /> */}
+            <form className="d-flex mb-2">
+              <div className="col-7 me-2">
+                <input
+                  className="form-control me-2"
+                  type="search"
+                  aria-label="Search"
+                  placeholder={placeholder}
+                />
+              </div>
+
               <button
                 className="btn btn-outline-success"
                 type="submit"
@@ -172,6 +177,9 @@ export const Navbar = ({
               >
                 <FormattedMessage id="search.btn" />
               </button>
+            </form>
+            <div className="d-flex">
+              {" "}
               <div className="form-check form-switch m-1">
                 <input
                   onChange={(e) =>
@@ -186,14 +194,13 @@ export const Navbar = ({
                 />
               </div>
               <select
-                className="ms-1"
+                className="ms-2"
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
               >
                 <option value={locales.RU}>RU</option>
                 <option value={locales.EN}>EN</option>
               </select>
-
               {isAuthenticated ? (
                 <NavLink
                   to="/main"
@@ -207,7 +214,7 @@ export const Navbar = ({
                   <FormattedMessage id="nav-login.btn" />
                 </NavLink>
               )}
-            </form>
+            </div>
           </div>
         </div>
       </nav>

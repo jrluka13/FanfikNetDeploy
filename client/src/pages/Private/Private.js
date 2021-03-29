@@ -52,7 +52,7 @@ export const Private = () => {
               {loading ? (
                 <Loader />
               ) : (
-                <div className="mt-2">
+                <div className=" mt-2">
                   {!loading && (
                     <BooksList books={books} onChange={fetchBooks} />
                   )}

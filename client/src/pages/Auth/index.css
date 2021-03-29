@@ -9,3 +9,9 @@
     border-radius: 25px;
     background: #e6e6e6;;
 }
+
+@media only screen and (max-width: 768px) {
+  .divAuth{
+    width: 100%;
+  }
+}
